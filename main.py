@@ -1,20 +1,21 @@
 from fastapi import FastAPI, Request
-import uvicorn
 
 app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "GamerFuel Server is Running!"}
+    return {"message": "GamerFuel Server is LIVE"}
 
+# هذا هو الرابط الذي وضعناه في AdsGram
 @app.post("/adv-reward")
+@app.get("/adv-reward") # أضفنا GET أيضاً للاحتياط
 async def adsgram_reward(request: Request):
-    # استقبال البيانات من AdsGram
-    data = await request.json()
-    user_id = data.get('user_id') 
+    # استقبال الـ user_id من الرابط
+    user_id = request.query_params.get('user_id')
     
-    print(f"المستخدم {user_id} حصل على مكافأة!")
-    return {"status": "ok"}
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    if user_id:
+        print(f"✅ عملية ناجحة! المستخدم رقم {user_id} شاهد الإعلان.")
+        # هنا سنضع كود قاعدة البيانات في الخطوة القادمة
+        return {"status": "success", "user_id": user_id}
+    
+    return {"status": "error", "message": "no user_id"}
